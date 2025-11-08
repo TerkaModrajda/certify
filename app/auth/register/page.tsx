@@ -181,7 +181,8 @@ export default function RegisterPage() {
     // Prefer server-side OAuth redirect for Google. Keep a graceful fallback for other providers.
     if (provider === 'Google') {
       if (typeof window !== 'undefined') {
-        window.location.href = '/api/auth/google'
+        // Redirect to NextAuth signin route for Google provider
+        window.location.href = '/api/auth/signin/google'
       }
       return
     }

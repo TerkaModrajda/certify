@@ -7,23 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
-import { 
-  Award, 
-  Mail, 
-  Lock, 
-  ArrowRight, 
-  Eye, 
-  EyeOff,
-  User,
-  Building2,
-  Phone,
-  Loader2,
-  CheckCircle,
-  AlertCircle,
-  Chrome,
-  Apple,
-  Github
-} from 'lucide-react'
+import { Award, Mail, Lock, ArrowRight, Eye, EyeOff, User, Building2, Phone, Loader2, CheckCircle, AlertCircle, Chrome } from 'lucide-react'
 
 // Nejčastější slabá hesla
 const commonPasswords = [
@@ -194,9 +178,17 @@ export default function RegisterPage() {
   }
 
   const handleSocialLogin = (provider: string) => {
+    // Prefer server-side OAuth redirect for Google. Keep a graceful fallback for other providers.
+    if (provider === 'Google') {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/api/auth/google'
+      }
+      return
+    }
+
     setIsLoading(true)
     setTimeout(() => {
-      alert(`Přihlášení přes ${provider} proběhlo úspěšně!`)
+      alert(`Přihlášení přes ${provider} není momentálně dostupné.`)
       setIsLoading(false)
     }, 1000)
   }
@@ -448,37 +440,20 @@ export default function RegisterPage() {
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">nebo pokračujte s</span>
+                  <span className="px-2 bg-white text-gray-500">nebo pokračujte s Google</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="mt-3">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => handleSocialLogin('Google')}
                   disabled={isLoading}
-                  className="flex items-center justify-center"
+                  className="w-full flex items-center justify-center gap-3"
                 >
                   <Chrome className="w-5 h-5" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => handleSocialLogin('Apple')}
-                  disabled={isLoading}
-                  className="flex items-center justify-center"
-                >
-                  <Apple className="w-5 h-5" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => handleSocialLogin('GitHub')}
-                  disabled={isLoading}
-                  className="flex items-center justify-center"
-                >
-                  <Github className="w-5 h-5" />
+                  <span>Pokračovat přes Google</span>
                 </Button>
               </div>
             </div>

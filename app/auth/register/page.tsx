@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -178,12 +179,11 @@ export default function RegisterPage() {
   }
 
   const handleSocialLogin = (provider: string) => {
-    // Prefer server-side OAuth redirect for Google. Keep a graceful fallback for other providers.
+    // Use next-auth's client helper to start the provider flow.
     if (provider === 'Google') {
-      if (typeof window !== 'undefined') {
-        // Redirect to NextAuth signin route for Google provider
-        window.location.href = '/api/auth/signin/google'
-      }
+      setIsLoading(true)
+      // signIn will redirect the browser to the provider
+      signIn('google', { callbackUrl: typeof window !== 'undefined' ? window.location.origin : undefined })
       return
     }
 

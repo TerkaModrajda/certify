@@ -1,0 +1,350 @@
+﻿Certify Me – Produktová strategie 
+Tento dokument sjednocuje a strukturuje všechny důležité informace o projektu Certify Me. Cílem je odstranit duplicity a přehledně rozdělit obsah do hlavních kapitol a podkapitol.
+1 Základní informace
+Certify Me je cloudová webová aplikace pro hromadnou tvorbu, správu a distribuci certifikátů, osvědčení, diplomů, vysvědčení a dalších dokumentů. Uživatelé (vydavatelé) nahrají vlastní design v PDF, nadefinují dynamická pole, nahrají seznam příjemců a během několika minut vygenerují personalizované soubory nebo je odešlou e‑mailem či do tisku. Každý certifikát je snadno ověřitelný pomocí QR kódu a veřejného verifikačního odkazu.
+1.1 Pro koho
+* Jazykové a odborné školy
+
+* Školitelé, HR oddělení, eventové agentury
+
+* Soutěže, řemeslné cechy, neziskovky
+
+1.2 Co aplikace dělá
+   1. Nahrát PDF design – uživatel nahraje šablonu (certifikát/diplom) v PDF.
+
+   2. Nadefinovat pole – zvolí dynamická pole (jméno, datum narození, název kurzu, IČO, podpis, datum vystavení apod.).
+
+   3. Vložit seznam příjemců – import seznamu jmen a dalších údajů (copy‑paste z Excelu/CSV) s odpovídajícími sloupci.
+
+   4. Přetáhnout pole na šablonu – drag‑and‑drop editor umístění polí na certifikát.
+
+   5. Vygenerovat certifikáty – hromadné vytvoření PDF/ZIP, e‑mailová rozesílka nebo předání do tisku.
+
+   6. Ověření a revokace – každý certifikát má QR kód vedoucí na verifikační stránku; vydavatel může certifikát kdykoliv zneplatnit.
+
+1.3 Přidaná hodnota
+      * Veřejná ověřovací stránka s QR (ochrana proti podvrhům, revokace, audit log)
+
+      * Podpora signatury a budoucího data vystavení
+
+      * Možnost vybrat z předpřipravených šablon (template library)
+
+      * Možnost objednat tisk a zaslání na adresu
+
+2 Vize a cíle
+         * Vize: „Jedním klikem vystav certifikáty, které jde snadno ověřit.“
+
+         * Primární cíl MVP: Snížit čas na vystavení 100+ certifikátů z hodin na minuty při zachování důvěryhodnosti a snadného ověření.
+
+         * North Star metric: Počet ověřených (QR) certifikátů vydaných na 1 organizaci za měsíc.
+
+         * KPI pro první 3 měsíce: 50 aktivních organizací (≥ 1 batch), 10 PRO předplatitelů, 2 case studies.
+
+3 Produkt a funkce
+3.1 Hlavní flow uživatele
+            1. Registrace a přihlášení – magic‑link e‑mail, možnost více organizací a rolí (Owner, Editor, Viewer).
+
+            2. Onboarding/průvodce – krátké vysvětlení, nahrání první šablony nebo výběr z knihovny.
+
+            3. Editor – panel s dostupnými poli, přetažení na šablonu PDF, definice pravidel (formát data, budoucí datum, volitelné zobrazování).
+
+            4. Import dat – vložení tabulky, mapování sloupců na pole (AI asistované, auto‑detekce), preview a kontrola.
+
+            5. Preflight kontrola – mezikrok před generováním; zobrazení vzorového certifikátu, checklist: pozice polí, chybějící data, správný podpis a datum.
+
+            6. Generování a export – vytvoření dávky PDF, ZIP ke stažení, e‑mailové rozeslání, případně zadání tisku/zaslání poštou.
+
+            7. Verifikace a revokace – QR odkaz na veřejnou stránku bez PII (jen anonymní ID). Vydavatel vidí audit log a může certifikát revokovat.
+
+3.2 Template library
+               * 12 kurátorských šablon v češtině/angličtině (certifikát o absolvování, osvědčení BOZP, diplom, účastnický list, vysvědčení, jazykový certifikát, interní compliance, první pomoc, workshop, ocenění „Zaměstnanec měsíce“, odborný kurz, dětská soutěž).
+
+               * Každá šablona obsahuje doporučená pole a vzorové CSV (jméno, kurz, datum, podpis).
+
+               * Free plán: 3 základní šablony; Pro plán: celá knihovna; do budoucna marketplace prémiových šablon.
+
+3.3 Pokročilé funkce (v2)
+                  * Auto‑detekce polí ve vlastním PDF (AI)
+
+                  * Sekvenční číslování (CERT‑2025‑0001)
+
+                  * Vícejazyčné certifikáty (podmíněné bloky)
+
+                  * Apple/Google Wallet (PKPass) export
+
+                  * Portál příjemce (znovustažení, žádost o opravu jména)
+
+                  * Marketplace s prémiovými šablonami a revenue‑share
+
+4 Technický stack, infrastruktura a dev proces
+4.1 Doporučený stack (Start → Growth)
+                     * Next.js/TypeScript pro aplikaci (Vercel hosting).
+
+                     * PostgreSQL (Neon, EU region) pro data a row‑level security (v2).
+
+                     * Cloudflare R2 pro ukládání šablon a vygenerovaných PDF (soukromé buckety, presigned URL).
+
+                     * Upstash Redis jako fronta a cache (worker pro generování PDF).
+
+                     * Railway/Fly.io pro běh workeru.
+
+                     * Postmark pro magic‑link, notifikace a e‑mailovou rozesílku.
+
+                     * Stripe pro billing (Free/Pro/Business), VAT OSS, webhooks.
+
+                     * Cloudflare pro DNS, WAF, CDN, rate‑limiting.
+
+4.2 Dev proces & CI/CD
+                        * Repository: monorepo (apps/web, apps/worker, packages/core|adapters|shared).
+
+                        * CI: GitHub Actions (lint, typecheck, test, build).
+
+                        * CD: automatické nasazení na Vercel + deployment workeru (Railway/Fly) po tagu.
+
+                        * Semver a changelog: semantic‑release.
+
+                        * Playwright & vizuální testy: kontrola generovaných PDF, pixel‑diff na 3 demo šablonách.
+
+4.3 Adapterová architektura
+                           * Abstrakce pro storage (R2), mailer (Postmark), queue (Redis), billing (Stripe), PDF generaci (pdf-lib/puppeteer), verifikaci a revokaci.
+
+                           * Umožňuje snadnou výměnu providerů (GCP/AWS/On‑prem) bez přepisu jádra.
+
+4.4 Checklist „Day‑0 až Day‑7“
+                              1. Založit GitHub a Vercel; nastavit CI/CD.
+
+                              2. Zaregistrovat Neon, R2, Upstash, Postmark, Stripe, Cloudflare.
+
+                              3. Vytvořit monorepo skeleton, core moduly a .env.example.
+
+                              4. Implementovat základní auth (magic‑link) a import PDF šablony.
+
+                              5. Spustit lokální generování PDF (worker) a první testy.
+
+                              6. Nasadit preview verzi (Vercel) a pozvat pilotní uživatele.
+
+                              7. Sledovat metriky a iterovat.
+
+5 Design, UX a UI systém
+5.1 Základní principy
+                                 * Čistý design: bílé pozadí, odstíny modré pro akcenty, minimalistická typografie (Sans-serif).
+
+                                 * Responzivní layout: grid se třemi breakpoints (mobil, tablet, desktop).
+
+                                 * Konzistentní spacing: 4/8 px grid.
+
+                                 * Komponenty: karty, tabulky, formuláře, drag‑and‑drop area, modály, toast notifikace.
+
+                                 * Animace: jemné přechody (ease‑in/out) pro nahrávání, přetahování a potvrzení.
+
+                                 * Přístupnost: kontrast, velikost písma, klávesové zkratky, „reduced motion“ preference.
+
+5.2 Light a dark režim
+                                    * Uživatel si volí režim; paleta barvy modré se převrací (tmavé pozadí, světlé akcenty).
+
+                                    * Uložení volby do profilu.
+
+5.3 UX checklist
+                                       * Jasná on‑boarding flow (krok za krokem).
+
+                                       * Prázdné stavy s nápovědou (upload šablony, import dat, preflight bez chyb).
+
+                                       * Možnost vrátit se zpět v kroku („zpět“ u preflight).
+
+                                       * Drag‑and‑drop indikátory a mřížka pro zarovnání polí.
+
+                                       * Kontextová nápověda (tooltipy, mini‑asistent).
+
+                                       * Přehled vygenerovaných dávek, stav „valid/revoked“ u každého certifikátu.
+
+6 Marketingová a go‑to‑market strategie
+6.1 Strategie & cíle
+                                          * AARRR framework: Acquisition, Activation, Retention, Revenue, Referral.
+
+                                          * North Star: ověřená (QR) certifikátová dávka na organizaci.
+
+                                          * Primární cíle 0–3 měsíce: 50 aktivních org, 10 Pro předplatitelů, 2 case studies.
+
+6.2 Měřící plán
+                                             * Nastavit eventy pro Plausible/PostHog (návštěvy, signup, import, generování, verify click).
+
+                                             * Standardizovat UTM parametry; Insight Tag na LI pouze po souhlasu.
+
+                                             * Dashboard KPI: Acquisition (CTR z verify), Activation (signup rate, first batch rate, TTFC – time to first certificate), Retention (opakovací dávky), Revenue (Free→Pro conversion), Quality (preflight pass rate).
+
+6.3 LinkedIn & content playbook
+                                                * LI company page, founder profil, pravidelná tvorba obsahu (teasery, behind‑the‑scenes, edukativní články: „QR a ověřitelnost“, „Jak importovat šablonu“, „Případová studie“).
+
+                                                * Remarketing kampaně na návštěvníky a verify‑page viewery s souhlasem.
+
+                                                * Outreach přes osobní zprávy na relevantní jazykovky/školitele (20–30 týdně), doplněné mini‑videem.
+
+                                                * Blog se sérií článků; webináře „Od PDF k hromadné generaci“.
+
+6.4 Go‑to‑market harmonogram (12 týdnů)
+                                                   * T1: Základy měření, waitlist, první LI post a lead magnet.
+
+                                                   * T2–T3: První obsah, blogy, demo video, outreach na pilotní uživatele; mikro‑landingy pro use‑cases.
+
+                                                   * T4–T5: A/B test hero headline, publikace demo videa, edukace QR, lead magnet „5 šablon zdarma“.
+
+                                                   * T6–T7: Preflight edukace, help centrum, partnerství s tiskárnami, šablona týdne.
+
+                                                   * T8: Pricing page, trial e‑maily, remarketing.
+
+                                                   * T9–T10: Dashboardy, SEO audit, webinář.
+
+                                                   * T11: Co‑marketing s tiskem, case study.
+
+                                                   * T12: Go‑live kampaň – PR, press kit, promo kód, publikace case studies.
+
+6.5 Pricing & packaging (shrnutí)
+                                                      * Free – 10 certifikátů/měsíc, omezené šablony, bez e‑mail rozesílky.
+
+                                                      * Pro – měsíční předplatné (např. 20 EUR), full šablony, e‑mail rozesílka, QR verifikace, preflight, trial e‑maily metered (100–200).
+
+                                                      * Business – vyšší limit, týmové role, white‑label verifikace, DPA na míru, SLA, webhooks, tisk.
+
+                                                      * Add‑ons – tisk & pošta, custom doména verifikace, premium šablony.
+
+                                                      * Enterprise – individuální smlouva (SSO, on‑prem storage, eIDAS podpisy).
+
+7 Obchodní strategie a zákaznická péče
+7.1 Obchodní pipeline & proces
+                                                         * ICP (ideal customer profile): jazykovky (50–200 cert./měs.), BOZP školitelé, HR oddělení větších firem, eventové agentury.
+
+                                                         * Kanály: LinkedIn (founder-to-founder outreach), e‑mail, komunitní skupiny, partnerství s tiskaři.
+
+                                                         * Pilotní program: 14denní pilot na 100–300 certifikátů; úspěch = <30 min end‑to‑end, <5 % chyb, ≥80 % preflight pass.
+
+                                                         * Discovery call skript: mapování procesu, frekvence, rozpočet, integrace, rozhodovací cyklus.
+
+                                                         * Námitky: cena (řešit ROI kalkulačkou), bezpečnost/GDPR (vysvětlit QR bez PII, DPA, audit log), komplexnost implementace (auto‑mapování, šablony).
+
+7.2 Zákaznická péče (CS)
+                                                            * Onboarding: 0–14 dní, nahrání jejich šablony + import dat, 30min call, přidělení cs manažera.
+
+                                                            * SLA: P1 (generace nefunkční) – 4 h; P2 (degradace) – 1 den.
+
+                                                            * Health score: počet batchí, preflight fail rate, chybovost generace, zaplacený plán.
+
+                                                            * Support: znalostní báze s krátkými GIFy, chat/email; měření CSAT, NPS.
+
+                                                            * Expanze & referral: nabídka vyššího plánu, referral program (kredity za doporučení).
+
+8 Bezpečnost a ochrana osobních údajů
+8.1 Security baseline (MVP)
+                                                               * QR & verifikace: QR obsahuje pouze náhodné ID (/v/<nanoid>), verifikační stránka je noindex a bez PII.
+
+                                                               * Multi‑tenant izolace: tenant_id guard v každém dotazu; (v2) Postgres RLS.
+
+                                                               * Soukromé storage: R2 buckety privátní; soubory se přistupují přes presigned URL s krátkou expirací.
+
+                                                               * Uploady: limit velikosti, MIME detekce, sanitizace PDF (qpdf/ghostscript); odmítání password‑protected PDF.
+
+                                                               * Autentizace: magic‑link single‑use token, hashovaný v DB, session cookie HttpOnly+Secure+SameSite.
+
+                                                               * Role & oprávnění: Owner, Editor, Viewer; (v2) granularita. 2FA minimálně pro adminy.
+
+                                                               * Rate limiting: Upstash Redis pro API/verify endpoints; Cloudflare Turnstile na registraci.
+
+                                                               * Security headers: CSP, HSTS, X-Content-Type-Options, Referrer-Policy, X-Frame-Options.
+
+                                                               * Logy & audit: strukturované logy bez PII, audit trail (kdo/kdy vytvořil/revokoval).
+
+                                                               * CI/CD: 2FA na GitHub, branch protection, secret scanning, rotace tokenů.
+
+8.2 Security roadmap (30–90 dní)
+                                                                  * Postgres RLS, 2FA pro všechny, SSO pro Business.
+
+                                                                  * Webhooky s HMAC, SAST/DAST (Semgrep, ZAP), syntetické monitorování verifikace.
+
+                                                                  * Status page a incident runbook.
+
+                                                                  * Health monitoring generace (p95 čas renderu, error rate).
+
+8.3 GDPR & soukromí
+                                                                     * Ty jako zpracovatel, klient jako správce dat příjemců. Připravit DPA (Data Processing Agreement).
+
+                                                                     * Minimalizace dat: jména a e‑maily uchovávat jen pro generaci; QR bez PII.
+
+                                                                     * Retenční politika: anonymizace dat (např. 180 dnů); možnost export a mazání.
+
+                                                                     * Transparentní seznam subprocesorů (Neon, R2, Upstash, Postmark, Stripe).
+
+                                                                     * DPIA pro verifikační stránku; ePrivacy compliance (souhlasy pro newsletter a remarketing).
+
+9 Právní a compliance rámec
+9.1 Dokumenty
+                                                                        * Terms of Service, Privacy Policy, Cookie Policy (CMP), Data Processing Addendum, Master Service Agreement (pro Business), SLA, Acceptable Use Policy, Incident Policy, RoPA (Record of Processing Activities).
+
+                                                                        * Udržovat verze a datace; zpřístupnit ke stažení.
+
+9.2 Sub‑processoři a přenosy dat
+                                                                           * Hosting a storage v EU (Neon, R2, Upstash).
+
+                                                                           * Přenosy mimo EHP (e.g. Postmark/Stripe) přes SCC a Transfer Impact Assessment.
+
+9.3 Marketing & ePrivacy
+                                                                              * Remarketing pouze se souhlasem; cookie banner s možností odmítnout.
+
+                                                                              * Cold B2B e‑mail v ČR: legitimní zájem + odkaz pro odhlášení.
+
+                                                                              * Newsletter na base kontaktů jen se souhlasem; oddělit transakční a marketingové e‑maily.
+
+9.4 Tisk a logistika
+                                                                                 * Smlouvy se sub‑dodavateli (tiskárny); definovat povinnosti zpracovatele dat, poštovní tajemství.
+
+                                                                                 * SLA pro doručení (D+3 pro CZ/SK), možnost náhledu před tiskem.
+
+10 Finance, náklady a ROI
+10.1 Náklady na provoz
+                                                                                    * Start (Dev/pre-launch): Vercel Hobby $0, Neon Free, R2 Free, Upstash Free, Railway $1–10, Postmark trial; celkem ~€20–€30/měsíc.
+
+                                                                                    * MVP s prvními platícími: Vercel Pro $20, Neon Launch $5, Worker $10, Postmark $15; celkem ~€45–€70/měsíc.
+
+                                                                                    * Růst (2–5 k cert./měs.): ~€60–€100/měsíc + Stripe poplatky.
+
+                                                                                    * Stripe poplatky: EU platby ~1,4 % + €0,25; Billing (Subscription) +0,7 %; celkem ~3 % z obratu.
+
+10.2 Výnosy (scénáře Y1–Y2)
+                                                                                       * Konzervativní: 30 Pro uživatelů × €20 = €600/měsíc; Business 5 org × €99 = €495 → ARR ~€13k.
+
+                                                                                       * Základní: 50 Pro × €20 + 10 Business × €99 → ARR ~€30k.
+
+                                                                                       * Ambiciózní: 100 Pro × €20 + 20 Business × €129 + add‑ons (tisk, premium templates) → ARR ~€60–80k.
+
+                                                                                       * Potenciál růstu skrze marketplace, tiskový kanál a vyšší plány.
+
+10.3 ROI kalkulačka
+                                                                                          * Parametry: počet certifikátů/měsíc, hodinová sazba, čas manuálního vystavení, chybovost a náklady na opravu/tisk.
+
+                                                                                          * Formule: ROI = (ušetřený čas × hodinová sazba + snížené náklady na chyby) / měsíční poplatek – 1.
+
+                                                                                          * Viz přiložený Excel/Google Sheets (příklady pro jazykovku, BOZP školitele, event agenturu).
+
+11 Roadmapa (12 týdnů) a harmonogram
+                                                                                             * Týdny 1–2: setup infra, registrace služeb, skeleton repo, první verze auth a upload šablon, definice datového modelu.
+
+                                                                                             * Týdny 3–4: editor mapování polí, import dat, základní generování PDF; preflight kontrola; začátek marketingu (blog #1, LI posty), první pilot.
+
+                                                                                             * Týdny 5–6: template library, preflight asistent, verifikace (QR + revokace), základní billing; marketing lead magnet, case studies.
+
+                                                                                             * Týdny 7–8: e‑mail rozesílka, pricing page, trial e‑maily; design landing page, remarketing; právní dokumenty finalizace.
+
+                                                                                             * Týdny 9–10: tiskový modul (pilot), dashboardy/reporty, SEO, webinář; security testy (SAST/DAST), monitoring.
+
+                                                                                             * Týdny 11–12: co‑marketing s tiskárnami, go‑live kampaň, release candidate, finální QA, pilot feedback; start monetizace.
+
+                                                                                             * Post‑launch (do 6 měsíců): RLS, 2FA/SSO, webhooky, marketplace, partnerství, eIDAS podpisy, internationalizace, premium šablony.
+
+12 Etika, reputace a důvěra
+                                                                                                * Vymezit, k čemu nesmí služba sloužit (falešné diplomy, státní listiny, podvrhy).
+
+                                                                                                * Veřejná Trust page: bezpečnost, sub‑procesory, SLA, status page, revokace, audit log, právní dokumenty, changelog/roadmapa.
+
+                                                                                                * Anti‑misuse procedury: ověření pravosti vydavatele, možnost revokovat, jasný takedown policy.
+
+                                                                                                * Incident komunikace: připravený runbook (P1/P2); transparentní informování klientů a uživatelů.
+
+                                                                                                * Udržovat neutralitu a nezávislost; důraz na evropské standardy ochrany dat.

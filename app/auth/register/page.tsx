@@ -208,11 +208,33 @@ export default function RegisterPage() {
 
       const data = await res.json()
       if (!res.ok) {
+        // If user already exists, try to auto-sign-in with provided credentials
+        if (res.status === 409) {
+          // Attempt sign in for existing user
+          const result = await signIn('credentials', { redirect: false, email: formData.email, password: formData.password })
+          if (result && (result as any).ok) {
+            // Signed in successfully
+            router.push('/dashboard')
+            return
+          }
+
+          setErrors({ general: data?.error || 'Uživatel již existuje. Pokud máte heslo, přihlaste se.' })
+          return
+        }
+
         setErrors({ general: data?.error || 'Registrace selhala' })
         return
       }
 
-      // After successful creation, navigate user to login so they can sign in
+      // After successful creation, try to auto-login the new user
+      const signResult = await signIn('credentials', { redirect: false, email: formData.email, password: formData.password })
+      if (signResult && (signResult as any).ok) {
+        // Redirect to dashboard
+        router.push('/dashboard')
+        return
+      }
+
+      // If auto-login failed for some reason, fall back to login page
       alert('Registrace proběhla úspěšně! Přesměruji vás na přihlášení.')
       router.push('/auth/login')
     } catch (error) {

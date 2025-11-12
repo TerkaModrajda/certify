@@ -143,10 +143,12 @@ body {
 
 /* Pixel-art theme (retro) */
 .pixel {
-  --pixel-bg: #f6efe6;
-  --pixel-ink: #0b1220;
-  --pixel-accent: #ffd166;
-  --pixel-accent-2: #ef476f;
+  /* 8-bit Pastel palette (user selected) */
+  --pixel-bg: #F3E8FF;
+  --pixel-ink: #1F2A44;
+  --pixel-accent: #FFB4A2;
+  --pixel-accent-2: #8BD3FF;
+  --pixel-accent-3: #FFE87C;
   image-rendering: pixelated;
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: grayscale;

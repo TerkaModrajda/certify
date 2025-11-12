@@ -163,11 +163,36 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    // Validate current step fields first
     if (!validateForm()) return
 
+    // Extra safety: always validate password fields before attempting submission
+    const newErrors: Record<string, string> = {}
+    if (!formData.password) {
+      newErrors.password = 'Heslo je povinné'
+    } else {
+      const pwErrs = validatePassword(formData.password)
+      if (pwErrs.length > 0) newErrors.password = pwErrs[0]
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Potvrzení hesla je povinné'
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Hesla se neshodují'
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(prev => ({ ...prev, ...newErrors }))
+      return
+    }
+
+    // Update strength state (in case user pasted a password)
+    setPasswordStrength(calculatePasswordStrength(formData.password))
+
     setIsLoading(true)
-    
+
     try {
+      // Placeholder: perform real registration request here
       await new Promise(resolve => setTimeout(resolve, 2000))
       alert('Registrace proběhla úspěšně! Nyní by došlo k přesměrování na dashboard.')
     } catch (error) {
@@ -262,7 +287,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Plan Toggle */}
-        <div className="mb-6">
+          <div className="mb-6">
           <div className="flex bg-gray-100 rounded-full p-1">
             {Object.entries(plans).map(([planKey, plan]) => {
               const isSelected = formData.plan === planKey
@@ -272,13 +297,13 @@ export default function RegisterPage() {
                   key={planKey}
                   type="button"
                   onClick={() => setFormData({...formData, plan: planKey})}
-                  className={`flex-1 py-2 px-3 rounded-full font-medium text-sm transition-all duration-200 ${
+                  className={`flex-1 py-2 px-3 font-medium text-sm transition-all duration-200 ${
                     isSelected 
                       ? 'bg-white text-blue-600 shadow-md' 
                       : 'text-gray-600 hover:text-gray-800'
                   }`}
                 >
-                  {plan.name} {plan.price !== '0 Kč' && `• ${plan.price}`}
+                  {plan.name} <span className="ml-1 whitespace-nowrap">{plan.price !== '0 Kč' && `• ${plan.price.replace(/\s+Kč$/, '\u00A0Kč')}`}</span>
                 </button>
               )
             })}

@@ -192,9 +192,29 @@ export default function RegisterPage() {
     setIsLoading(true)
 
     try {
-      // Placeholder: perform real registration request here
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      alert('Registrace proběhla úspěšně! Nyní by došlo k přesměrování na dashboard.')
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          company: formData.company,
+          phone: formData.phone,
+          plan: formData.plan
+        })
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        setErrors({ general: data?.error || 'Registrace selhala' })
+        return
+      }
+
+      // After successful creation, navigate user to login so they can sign in
+      alert('Registrace proběhla úspěšně! Přesměruji vás na přihlášení.')
+      router.push('/auth/login')
     } catch (error) {
       console.error('Registration error:', error)
       setErrors({ general: 'Registrace se nezdařila. Zkuste to prosím znovu.' })

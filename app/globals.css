@@ -219,3 +219,29 @@ body {
   background-size: 16px 16px;
 }
 
+/* Override common Tailwind rounded utilities inside pixel theme to be blocky */
+.pixel .rounded, .pixel .rounded-sm, .pixel .rounded-md, .pixel .rounded-lg, .pixel .rounded-xl, .pixel .rounded-full {
+  border-radius: 0 !important;
+}
+
+/* Replace soft shadows with blocky drop shadows for common shadow utilities */
+.pixel .shadow, .pixel .shadow-sm, .pixel .shadow-md, .pixel .shadow-lg, .pixel .shadow-xl, .pixel .shadow-2xl {
+  box-shadow: 8px 8px 0 #000 !important;
+}
+
+/* Make borders thicker and black when in pixel mode for elements that have borders */
+.pixel .border, .pixel .border-2, .pixel .border-4 {
+  border-color: #000 !important;
+  border-width: 3px !important;
+}
+
+/* Inputs default to blocky pixel look */
+.pixel input, .pixel textarea, .pixel select {
+  border-radius: 0 !important;
+  border-width: 3px !important;
+  border-color: #000 !important;
+  background: #fffbe6 !important;
+  box-shadow: none !important;
+  font-family: 'Press Start 2P', monospace !important;
+}
+

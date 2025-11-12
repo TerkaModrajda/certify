@@ -225,7 +225,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <>
+    <div className="pixel">
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 nav-glass">
         <div className="container mx-auto px-6 py-4">
@@ -647,6 +647,6 @@ export default function RegisterPage() {
         </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

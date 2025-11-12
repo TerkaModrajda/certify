@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import "tailwindcss";
 
 /* Base styles matching landing page design */
@@ -139,3 +140,73 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Pixel-art theme (retro) */
+.pixel {
+  --pixel-bg: #f6efe6;
+  --pixel-ink: #0b1220;
+  --pixel-accent: #ffd166;
+  --pixel-accent-2: #ef476f;
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+  font-family: 'Press Start 2P', ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+}
+
+/* Pixel overrides for existing button/card classes when inside .pixel */
+.pixel .btn-primary {
+  background: var(--pixel-accent);
+  color: var(--pixel-ink);
+  border: 4px solid #000;
+  border-radius: 0;
+  padding: 12px 20px;
+  box-shadow: 8px 8px 0 #000;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.pixel .btn-primary:hover { transform: none; }
+
+.pixel .btn-secondary {
+  background: var(--pixel-bg);
+  color: var(--pixel-ink);
+  border: 4px solid #000;
+  border-radius: 0;
+  padding: 12px 20px;
+  box-shadow: 8px 8px 0 #000 inset;
+  font-size: 12px;
+}
+
+.pixel .card-glass {
+  background: var(--pixel-bg);
+  border: 4px solid #000;
+  border-radius: 0;
+  box-shadow: 8px 8px 0 #000;
+  padding: 18px;
+}
+
+/* Pixel form input */
+.pixel .form-input {
+  background: #fffbe6;
+  border: 3px solid #000;
+  border-radius: 0;
+  padding: 12px 14px;
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* Pixel nav */
+.pixel .nav-glass {
+  background: var(--pixel-accent-2);
+  border-bottom: 4px solid #000;
+}
+
+/* Utility to apply blocky focus outlines */
+.pixel :focus {
+  outline: 4px solid #000;
+  outline-offset: 2px;
+}
+
+/* Make images crisp */
+.pixel img { image-rendering: pixelated; }
+

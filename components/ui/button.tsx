@@ -9,6 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "btn-primary",
+        pixel: "btn-primary rounded-none px-5 py-3",
         destructive: "bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 shadow-lg hover:shadow-xl hover:-translate-y-0.5",
         outline: "btn-secondary",
         secondary: "bg-white text-slate-700 border-2 border-slate-200 hover:bg-slate-50 hover:border-blue-500 rounded-full px-6 py-3",

@@ -212,3 +212,10 @@ body {
 /* Make images crisp */
 .pixel img { image-rendering: pixelated; }
 
+/* Tiled pixel background */
+.pixel-body-tile {
+  background-image: url('/pixel/tile.png');
+  background-repeat: repeat;
+  background-size: 16px 16px;
+}
+

@@ -10,9 +10,7 @@ export default function HomePage() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <Award className="w-5 h-5 text-white" />
-              </div>
+              <img src="/pixel/logo.svg" alt="CertifyMe" className="w-8 h-8" />
               <span className="text-xl font-bold text-white">CertifyMe</span>
             </div>
             <div className="flex items-center space-x-6">
